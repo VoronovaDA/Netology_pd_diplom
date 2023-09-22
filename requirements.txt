@@ -1,0 +1,10 @@
+Django
+pytz
+djangorestframework
+django-rest-passwordreset
+psycopg2-binary
+pyyaml
+ujson
+requests
+black
+python-dotenv
