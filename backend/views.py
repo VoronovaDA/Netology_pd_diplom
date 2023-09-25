@@ -13,6 +13,7 @@ from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from ujson import loads as load_json
 from yaml import load as load_yaml, Loader
+from django.contrib.auth.password_validation import validate_password
 
 from backend.models import (
     Shop,
@@ -25,6 +26,7 @@ from backend.models import (
     OrderItem,
     Contact,
     User,
+    ConfirmEmailToken,
 )
 from backend.serializers import (
     UserSerializer,
@@ -36,7 +38,6 @@ from backend.serializers import (
     OrderSerializer,
     ContactSerializer,
     ConfirmAccountSerializer,
-    ConfirmEmailTokenSerializer,
 )
 from backend.signals import new_user_registered, new_order
 
@@ -52,23 +53,28 @@ class UserRegisterView(APIView):
     # Регистрация методом POST
     def post(self, request, *args, **kwargs):
         # проверяем обязательные аргументы
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            user = authenticate(
-                request,
-                username=request.data["email"],
-                password=request.data["password"],
-                company=request.data["company"],
-                position=request.data["position"],
-            )
-            # проверяем пароли на идентичность
-            if user is not None:
-                if user.is_active:
-                    user, _ = User.objects.get_or_create(user=user)
-            if request.data.get("password") and request.data.get("password2"):
-                if request.data["password"] != request.data["password2"]:
-                    raise ValidationError("Password mismatch")
-                request.data.pop("password2")
+        if {
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+            "company",
+            "position",
+        }.issubset(request.data):
+            errors = {}
+
+            # проверяем пароль на сложность
+
+            try:
+                validate_password(request.data["password"])
+            except Exception as password_error:
+                error_array = []
+                # noinspection PyTypeChecker
+                for item in password_error:
+                    error_array.append(item)
+                return JsonResponse(
+                    {"Status": False, "Errors": {"password": error_array}}
+                )
             else:
                 # проверяем данные для уникальности имени пользователя
                 request.data._mutable = True
@@ -102,7 +108,7 @@ class ConfirmAccount(CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            token = ConfirmEmailTokenSerializer.objects.filter(
+            token = ConfirmEmailToken.objects.filter(
                 user__email=request.data["email"], key=request.data["token"]
             ).first()
             if token:
@@ -440,18 +446,15 @@ class PartnerUpdate(APIView):
                 {"Status": False, "Error": "Только для магазинов"}, status=403
             )
 
-        url = request.data.get("url")
-        if url:
-            validate_url = URLValidator()
+        file = request.data.get("file")
+        if file:
             try:
-                validate_url(url)
-            except ValidationError as e:
-                return JsonResponse({"Status": False, "Error": str(e)})
-            else:
-                stream = get(url).content
+                shop_name = request.user.shop.name
+            except:
+                shop_name = None
 
-                data = load_yaml(stream, Loader=Loader)
-
+            data = load_yaml(file, Loader=Loader)
+            if data["shop"] == shop_name or not shop_name:
                 shop, _ = Shop.objects.get_or_create(
                     name=data["shop"], user_id=request.user.id
                 )

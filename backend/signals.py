@@ -76,3 +76,8 @@ def new_order_signal(user_id, **kwargs):
         [user.email],
     )
     msg.send()
+
+
+new_user_registered.connect(new_user_registered_signal)
+
+new_order.connect(new_order_signal)

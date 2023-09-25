@@ -18,18 +18,14 @@ from backend.models import (
 
 
 class UserSerializer(serializers.ModelSerializer):
-    password = CharField(required=True, write_only=True, label="Password")
-    password2 = CharField(required=True, write_only=True, label="Password verification")
-
     class Meta:
         model = User
         fields = [
-            "first_name",
             "last_name",
+            "first_name",
             "surname",
             "email",
             "password",
-            "password2",
             "company",
             "type",
             "position",
