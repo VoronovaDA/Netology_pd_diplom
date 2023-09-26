@@ -456,7 +456,7 @@ class PartnerUpdate(APIView):
             data = load_yaml(file, Loader=Loader)
             if data["shop"] == shop_name or not shop_name:
                 shop, _ = Shop.objects.get_or_create(
-                    name=data["shop"], user_id=request.user.id
+                    name=data.get("shop"), defaults={"user_id": user_id}
                 )
                 for category in data["categories"]:
                     category_object, _ = Category.objects.get_or_create(

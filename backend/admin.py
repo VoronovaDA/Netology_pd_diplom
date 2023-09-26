@@ -7,6 +7,9 @@ from backend.models import (
     OrderItem,
     Contact,
     ConfirmEmailToken,
+    ProductParameter,
+    ProductInfo,
+    Product,
 )
 
 
@@ -24,22 +27,51 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Shop)
 class ShopAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("name", "url", "state", "user")
+    list_filter = ("state",)
+    search_fields = ("name",)
+    list_editable = ("state",)
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("name",)
+    list_filter = ("name",)
+    search_fields = ("name",)
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ("name", "category")
+    list_filter = ("category",)
+    search_fields = ("name",)
+    save_on_top = True
+
+
+@admin.register(ProductParameter)
+class ProductParameterAdmin(admin.ModelAdmin):
+    model = ProductParameter
+    extra = 0
+
+
+@admin.register(ProductInfo)
+class ProductInfoAdmin(admin.ModelAdmin):
+    model = ProductInfo
+    extra = 0
 
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("user", "dt", "state", "contact")
+    list_filter = ("state",)
+    save_on_top = True
+    date_hierarchy = "dt"
 
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    pass
+    model = OrderItem
+    extra = 0
 
 
 @admin.register(Contact)

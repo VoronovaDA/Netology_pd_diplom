@@ -1,10 +1,8 @@
 # Верстальщик
 from rest_framework import serializers
-from rest_framework.serializers import CharField, ValidationError
 
 from backend.models import (
     User,
-    ConfirmEmailToken,
     Parameter,
     Category,
     Shop,
@@ -55,16 +53,14 @@ class ContactSerializer(serializers.ModelSerializer):
         read_only_fields = ("id",)
         extra_kwargs = {"user": {"write_only": True}}
 
+    def create(self, validated_data):
+        validated_data["user"] = self.context["request"].user
+        return Contact.objects.create(**validated_data)
+
 
 class ConfirmAccountSerializer(serializers.Serializer):
     email = serializers.EmailField()
     token = serializers.CharField(max_length=150)
-
-
-class ConfirmEmailTokenSerializer(serializers.Serializer):
-    model = ConfirmEmailToken
-    fields = ("id", "email", "token")
-    read_only_fields = ("id",)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -117,17 +113,6 @@ class ProductParameterSerializer(serializers.ModelSerializer):
             "value",
         )
 
-    def to_internal_value(self, data):
-        ret = []
-        for key, val in data.items():
-            ret.append(
-                {
-                    "parameter": key,
-                    "value": val,
-                }
-            )
-        return ret
-
 
 class ProductInfoSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
@@ -146,6 +131,14 @@ class ProductInfoSerializer(serializers.ModelSerializer):
             "product_parameters",
         )
         read_only_fields = ("id",)
+
+
+class PartnerStateSerializer(serializers.Serializer):
+    state = serializers.BooleanField()
+
+
+class PartnerUpdateSerializer(serializers.Serializer):
+    file = serializers.FileField()
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
