@@ -7,4 +7,3 @@ pyyaml
 ujson
 requests
 black
-python-dotenv
