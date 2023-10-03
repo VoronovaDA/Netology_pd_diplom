@@ -36,7 +36,12 @@ from backend.serializers import (
     ContactSerializer,
     ConfirmAccountSerializer,
 )
-from backend.signals import new_user_registered, new_order
+from backend.tasks import new_user_register, new_order, send_password_reset_token
+from django.views.generic import TemplateView
+
+
+class Home(TemplateView):
+    template_name = "home.html"
 
 
 class UserRegisterView(APIView):
@@ -82,7 +87,7 @@ class UserRegisterView(APIView):
                     user = user_serializer.save()
                     user.set_password(request.data["password"])
                     user.save()
-                    new_user_registered.send(sender=self.__class__, user_id=user.id)
+                    new_user_register.send(sender=self.__class__, user_id=user.id)
                     return JsonResponse({"Status": True})
                 else:
                     return JsonResponse(
@@ -151,6 +156,12 @@ class LoginAccount(CreateAPIView):
         return JsonResponse(
             {"Status": False, "Errors": "Не указаны все необходимые аргументы"}
         )
+
+    def password_reset_token_created(instance, reset_password_token, **kwargs):
+        user = reset_password_token.user.email
+        key = reset_password_token.key
+        email = reset_password_token.user.email
+        send_password_reset_token.delay(user=user, key=key, email=email)
 
 
 class ContactView(APIView):
@@ -453,7 +464,7 @@ class PartnerUpdate(APIView):
             data = load_yaml(file, Loader=Loader)
             if data["shop"] == shop_name or not shop_name:
                 shop, _ = Shop.objects.get_or_create(
-                    name=data.get("shop"), defaults={"user_id": user_id}
+                    name=data["shop"], user_id=request.user.id
                 )
                 for category in data["categories"]:
                     category_object, _ = Category.objects.get_or_create(
