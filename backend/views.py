@@ -11,6 +11,10 @@ from rest_framework.views import APIView
 from ujson import loads as load_json
 from yaml import load as load_yaml, Loader
 from django.contrib.auth.password_validation import validate_password
+from django.views.generic import TemplateView
+from easy_thumbnails.signals import saved_file
+from backend.tasks import generate_thumbnails
+from django.dispatch import receiver
 
 from backend.models import (
     Shop,
@@ -37,11 +41,17 @@ from backend.serializers import (
     ConfirmAccountSerializer,
 )
 from backend.tasks import new_user_register, new_order, send_password_reset_token
-from django.views.generic import TemplateView
 
 
 class Home(TemplateView):
     template_name = "home.html"
+
+
+@receiver(saved_file)
+def generate_thumbnails_async(sender, fieldfile, **kwargs):
+    generate_thumbnails.delay(
+        model=sender, pk=fieldfile.instance.pk, field=fieldfile.field.name
+    )
 
 
 class UserRegisterView(APIView):

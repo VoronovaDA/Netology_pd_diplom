@@ -12,3 +12,4 @@ drf-spectacular
 redis
 django-allauth
 django-baton
+easy-thumbnails
