@@ -82,7 +82,7 @@ class User(AbstractUser):
     surname = models.CharField(max_length=150, blank=True)
     is_active = models.BooleanField(
         _("active"),
-        default=False,
+        default=True,
         help_text=_(
             "Designates whether this user should be treated as active. "
             "Unselect this instead of deleting accounts."
@@ -102,6 +102,11 @@ class User(AbstractUser):
         verbose_name = "Пользователь"
         verbose_name_plural = "Список пользователей"
         ordering = ("email",)
+
+    # @receiver(post_save, sender=User)
+    # def user_to_inactive(sender, instance, created, update_fields, **kwargs):
+    #     if created:
+    #         instance.is_active = True
 
 
 class Contact(models.Model):

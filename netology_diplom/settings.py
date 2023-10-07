@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
-
+# AzJ&F**JL6mAo'&U
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -44,14 +44,15 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_rest_passwordreset",
     "allauth",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
     "allauth.account",
     "allauth.socialaccount",
-    # social providers
     "allauth.socialaccount.providers.github",
     "backend",
     "easy_thumbnails",
-    "baton.autodiscover",
     "drf_spectacular",
+    "baton.autodiscover",
 ]
 
 MIDDLEWARE = [
@@ -150,6 +151,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "backend.User"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # EMAIL_USE_TLS = True
 
 EMAIL_HOST = "smtp.mail.ru"
@@ -194,11 +196,13 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_SERIALIZER = "json"
 
 
-SITE_ID = 1
 AUTHENTICATION_BACKENDS = [
-    # "django.contrib.auth.backends.ModelBackend",
+    "django.contrib.auth.backends.ModelBackend",
+    # "django.contrib.auth.backends.AllowAllUsersModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
+
+SITE_ID = 1
 ACCOUNT_EMAIL_VERIFICATION = "none"
 LOGIN_URL = "accounts/login/"
 LOGIN_REDIRECT_URL = "/"
@@ -206,14 +210,16 @@ ACCOUNT_LOGOUT_ON_GET = True
 
 SOCIALACCOUNT_PROVIDERS = {
     "github": {
-        # For each OAuth based provider, either add a ``SocialApp``
-        # (``socialaccount`` app) containing the required client
-        # credentials, or list them here:
+        # For each provider, you can choose whether or not the
+        # email address(es) retrieved from the provider are to be
+        # interpreted as verified.
+        "VERIFIED_EMAIL": True,
+        # 'EMAIL_AUTHENTICATION': True,
         "APP": {
             "client_id": "c32c7394d7a127c6bdbe",
-            "secret": "6b7d3e517bba096237814f7f17464ec637d9672a",
+            "secret": "9500a3bcc5ac3de861b1faf5731b6b2a9c74a8a1",
             "key": "",
-        }
+        },
     }
 }
 
