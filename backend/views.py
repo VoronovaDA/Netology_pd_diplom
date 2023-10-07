@@ -4,7 +4,6 @@ from django.contrib.auth import authenticate
 from django.db import IntegrityError
 from django.db.models import Q, Sum, F
 from django.http import JsonResponse
-from django.views.generic.base import TemplateResponseMixin
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
@@ -12,7 +11,6 @@ from rest_framework.views import APIView
 from ujson import loads as load_json
 from yaml import load as load_yaml, Loader
 from django.contrib.auth.password_validation import validate_password
-from django.views.generic import TemplateView
 from easy_thumbnails.signals import saved_file
 from backend.tasks import generate_thumbnails
 from django.dispatch import receiver
@@ -42,7 +40,6 @@ from backend.serializers import (
     ConfirmAccountSerializer,
 )
 from backend.tasks import new_user_register, new_order, send_password_reset_token
-from django.shortcuts import render
 
 
 from allauth.socialaccount.providers.github.views import GitHubOAuth2Adapter
@@ -54,10 +51,6 @@ class GitHubLogin(SocialLoginView):
     adapter_class = GitHubOAuth2Adapter
     callback_url = "http://127.0.0.1:8000/accounts/github/login/callback"
     client_class = OAuth2Client
-
-
-class Home(TemplateView):
-    template_name = "home.html"
 
 
 @receiver(saved_file)
