@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
+SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_rest_passwordreset",
     "allauth",
-    "dj_rest_auth",
-    "dj_rest_auth.registration",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
@@ -71,7 +69,7 @@ ROOT_URLCONF = "netology_diplom.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [str(BASE_DIR.joinpath("templates"))],
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -198,15 +196,13 @@ CELERY_TASK_SERIALIZER = "json"
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    # "django.contrib.auth.backends.AllowAllUsersModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-SITE_ID = 1
 ACCOUNT_EMAIL_VERIFICATION = "none"
-LOGIN_URL = "accounts/login/"
+# LOGIN_URL = "accounts/login/"
 LOGIN_REDIRECT_URL = "/"
-ACCOUNT_LOGOUT_ON_GET = True
+# ACCOUNT_LOGOUT_ON_GET = True
 
 SOCIALACCOUNT_PROVIDERS = {
     "github": {
@@ -217,7 +213,7 @@ SOCIALACCOUNT_PROVIDERS = {
         # 'EMAIL_AUTHENTICATION': True,
         "APP": {
             "client_id": "c32c7394d7a127c6bdbe",
-            "secret": "9500a3bcc5ac3de861b1faf5731b6b2a9c74a8a1",
+            "secret": "212d192538daa7068f8292ef29a07507e85f14bd",
             "key": "",
         },
     }
