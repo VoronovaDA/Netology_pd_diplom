@@ -92,7 +92,7 @@ class UserRegisterView(APIView):
                     user = user_serializer.save()
                     user.set_password(request.data["password"])
                     user.save()
-                    new_user_register.send(sender=self.__class__, user_id=user.id)
+                    new_user_register.delay(user_id=user.id)
                     return JsonResponse({"Status": True})
                 else:
                     return JsonResponse(
@@ -644,7 +644,7 @@ class OrderView(APIView):
                     )
                 else:
                     if is_updated:
-                        new_order.send(sender=self.__class__, user_id=request.user.id)
+                        new_order.delay(user_id=request.user.id)
                         return JsonResponse({"Status": True})
 
         return JsonResponse(

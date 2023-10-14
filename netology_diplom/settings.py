@@ -202,7 +202,7 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_EMAIL_VERIFICATION = "none"
 # LOGIN_URL = "accounts/login/"
 LOGIN_REDIRECT_URL = "/"
-# ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_LOGOUT_ON_GET = True
 
 SOCIALACCOUNT_PROVIDERS = {
     "github": {
@@ -218,6 +218,8 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
+
+DJANGO_SETTINGS_MODULE = "netology_diplom.settings"
 
 BATON = {
     "SITE_HEADER": "Сервис заказа товаров",

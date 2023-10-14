@@ -13,3 +13,4 @@ redis
 django-allauth
 django-baton
 easy-thumbnails
+pytest-django

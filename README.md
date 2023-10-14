@@ -40,3 +40,43 @@
 3. Реализация импорта товаров
 4. Реализация API views
 5. Полностью готовый backend
+
+
+### Для запуска проекта необходимо:
+
+#### Установить зависимости:
+
+```bash
+pip install -r requirements.txt
+```
+
+#### Запустить Redis:
+
+```bash
+docker-compose up
+```
+
+#### Запустить Celery:
+
+```bash
+python -m celery -A netology_diplom worker
+```
+
+#### Создать и провести миграции:
+
+```bash
+manage.py makemigrations
+manage.py migrate
+```
+
+#### Создать суперюзера: 
+
+```bash
+manage.py createsuperuser
+```
+
+#### Запустить сервер:
+
+```bash
+python manage.py runserver
+```
